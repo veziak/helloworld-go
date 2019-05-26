@@ -15,7 +15,7 @@ import (
 var db = NewDB()
 
 type DateOfBirthRequest struct {
-	DateOfBirth string `json:dateOfBirth`
+	DateOfBirth string `json:"dateOfBirth"`
 }
 
 func ValidateUsername(username string) error {
@@ -82,11 +82,11 @@ func getBirthdayMessage(w http.ResponseWriter, r *http.Request) {
 
 	exists, err := db.UserExist(username)
 	if err != nil {
-		errorResponse(w, 500, "Can't find user.")
+		errorResponse(w, 500, "Internal error.")
 		return
 	}
 	if !exists {
-		errorResponse(w, 404, "User doesn't exist")
+		errorResponse(w, 404, fmt.Sprintf("User %s not found.", username))
 		return
 	}
 
