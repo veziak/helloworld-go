@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"regexp"
 	"time"
@@ -14,7 +15,7 @@ import (
 var db = NewDB()
 
 type DateOfBirthRequest struct {
-	DateOfBirth string    `json:dateOfBirth`
+	DateOfBirth string `json:dateOfBirth`
 }
 
 func ValidateUsername(username string) error {
@@ -51,31 +52,35 @@ func ValidateDateOfBirth(dateOfBirth string) (time.Time, error) {
 	} else {
 		log.Printf("ValidateDateOfBirth regexp validation failed, dateOfBirth: %s", dateOfBirth)
 	}
-	return time.Time {}, fmt.Errorf("dateOfBirth: %s is in a wrong format", dateOfBirth)
+	return time.Time{}, fmt.Errorf("dateOfBirth: %s is in a wrong format", dateOfBirth)
 }
 
-
 func GetBirthdayMessage(username string, birthDate time.Time, today time.Time) string {
+
+	log.Printf("b: %v, t: %v", birthDate, today)
 	if today.Month() == birthDate.Month() && today.Day() == birthDate.Day() {
 		return fmt.Sprintf("Hello, %s! Happy birthday!", username)
 	}
-	nextBirthday := time.Date(today.Year(), birthDate.Month(), birthDate.Day(), 0, 0,0,0,  time.UTC)
+	nextBirthday := time.Date(today.Year(), birthDate.Month(), birthDate.Day(), 0, 0, 0, 0, time.UTC)
 
 	if nextBirthday.Unix() < today.Unix() {
-		nextBirthday = nextBirthday.AddDate(1, 0,0)
+		nextBirthday = nextBirthday.AddDate(1, 0, 0)
 	}
 
-	days := int64(nextBirthday.Sub(today).Hours() / 24)
-	return fmt.Sprintf("Hello, %s! Your birthday is in %d day(s)", username, days)
+	log.Printf("hours left: %v", nextBirthday.Sub(today).Hours())
+	// even if 1 hour left we should return "1 day left"
+	days := int64(math.Ceil(nextBirthday.Sub(today).Hours() / 24))
+	message := fmt.Sprintf("Hello, %s! Your birthday is in %d day(s)", username, days)
+	log.Print(message)
+	return message
 }
-
 
 func getBirthdayMessage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
 	log.Printf("get username %v", username)
 
-	exists, err:= db.UserExist(username)
+	exists, err := db.UserExist(username)
 	if err != nil {
 		errorResponse(w, 500, "Can't find user.")
 		return
@@ -91,10 +96,12 @@ func getBirthdayMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	now := time.Now()
+	// all time should be in UTC, otherwise time difference will calculated incorrectly
+	loc, _ := time.LoadLocation("UTC")
+	now := time.Now().In(loc)
 	message := GetBirthdayMessage(username, user.DateOfBirth, now)
 
-	result := map[string]string{"message": message }
+	result := map[string]string{"message": message}
 	Response(w, http.StatusOK, result)
 }
 
@@ -190,5 +197,3 @@ func Response(w http.ResponseWriter, code int, payload interface{}) {
 func errorResponse(w http.ResponseWriter, code int, msg string) {
 	Response(w, code, map[string]string{"message": msg})
 }
-
-
