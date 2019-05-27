@@ -83,6 +83,7 @@ func getBirthdayMessage(w http.ResponseWriter, r *http.Request) {
 
 	exists, err := db.UserExist(username)
 	if err != nil {
+		log.Printf("Error checking if user exist, error: %v", err)
 		errorResponse(w, 500, "Internal error.")
 		return
 	}
@@ -113,6 +114,7 @@ func healthcheck(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, http.StatusInternalServerError, "Service is not available at the moment.")
 		return
 	}*/
+	log.Printf("status ok")
 	Response(w, http.StatusOK, "")
 }
 
