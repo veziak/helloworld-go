@@ -8,6 +8,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"os"
 	"regexp"
 	"time"
 )
@@ -112,6 +113,15 @@ func healthcheck(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, http.StatusInternalServerError, "Service is not available at the moment.")
 		return
 	}
+	Response(w, http.StatusOK, "")
+}
+
+func version(w http.ResponseWriter, r *http.Request) {
+	version := os.Getenv("VERSION")
+	if version == "" {
+		version = "na"
+	}
+	Response(w, http.StatusOK, version)
 }
 
 func createOrUpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -169,7 +179,7 @@ func createOrUpdateUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		Response(w, http.StatusNoContent, "aa")
+		Response(w, http.StatusNoContent, "")
 	} else {
 		// create a new user
 		dob, err := ValidateDateOfBirth(data.DateOfBirth)
