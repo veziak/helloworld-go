@@ -57,7 +57,6 @@ func GetBirthdayMessage(username string, birthDate time.Time, today time.Time) s
 		nextBirthday = nextBirthday.AddDate(1, 0, 0)
 	}
 
-	log.Printf("hours left: %v", nextBirthday.Sub(today).Hours())
 	// even if 1 hour left we should return "1 day left"
 	days := int64(math.Ceil(nextBirthday.Sub(today).Hours() / 24))
 	message := fmt.Sprintf("Hello, %s! Your birthday is in %d day(s)", username, days)
