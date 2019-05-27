@@ -17,18 +17,21 @@ type DB struct {
 }
 
 func NewDB() *DB {
+	defaultHost := "localhost:5432"
+	defaultUser := "postgres"
+	defaultPassword := "postgres"
 	host := os.Getenv("POSTGRES_DB_HOST")
 	user := os.Getenv("POSTGRES_DB_USER")
 	password := os.Getenv("POSTGRES_DB_PASSWORD")
 
 	if host == "" {
-		host = "172.17.0.2:5432"
+		host = defaultHost
 	}
 	if user == "" {
-		user = "postgres"
+		user = defaultUser
 	}
 	if password == "" {
-		password = "postgres"
+		password = defaultPassword
 	}
 
 	db := pg.Connect(&pg.Options{
