@@ -105,6 +105,15 @@ func getBirthdayMessage(w http.ResponseWriter, r *http.Request) {
 	Response(w, http.StatusOK, result)
 }
 
+func healthcheck(w http.ResponseWriter, r *http.Request) {
+	err := db.CheckDBConnection()
+	if err != nil {
+		log.Printf("Healtheck failed, error: %v", err)
+		errorResponse(w, http.StatusInternalServerError, "Service is not available at the moment.")
+		return
+	}
+}
+
 func createOrUpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]

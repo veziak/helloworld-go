@@ -7,8 +7,8 @@ import (
 )
 
 type User struct {
-	Username      string 		`sql:"username,pk"`
-	DateOfBirth   time.Time		`sql:"dateofbirth"`
+	Username    string    `sql:"username,pk"`
+	DateOfBirth time.Time `sql:"dateofbirth"`
 }
 
 type DB struct {
@@ -66,4 +66,10 @@ func (db DB) UserExist(username string) (bool, error) {
 		return true, fmt.Errorf("Could not get user from the database: %s", err)
 	}
 	return exist, nil
+}
+
+// check database connection
+func (db DB) CheckDBConnection() error {
+	_, err := db.DB.Exec("select 1")
+	return err
 }
