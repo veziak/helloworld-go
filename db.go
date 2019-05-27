@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-pg/pg"
+	"os"
 	"time"
 )
 
@@ -16,11 +17,25 @@ type DB struct {
 }
 
 func NewDB() *DB {
+	host := os.Getenv("POSTGRES_DB_HOST")
+	user := os.Getenv("POSTGRES_DB_USER")
+	password := os.Getenv("POSTGRES_DB_PASSWORD")
+
+	if host == "" {
+		host = "172.17.0.2:5432"
+	}
+	if user == "" {
+		user = "postgres"
+	}
+	if password == "" {
+		password = "postgres"
+	}
+
 	db := pg.Connect(&pg.Options{
-		User:     "postgres",
-		Password: "postgres",
+		User:     user,
+		Password: password,
 		Database: "hello",
-		Addr:     "172.17.0.2:5432"})
+		Addr:     host})
 
 	return &DB{db}
 }
