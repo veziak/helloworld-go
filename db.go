@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/go-pg/pg"
-	"github.com/go-pg/pg/orm"
 	"os"
 	"time"
 )
@@ -38,25 +37,7 @@ func NewDB() *DB {
 		Database: "hello",
 		Addr:     host})
 
-	err := createSchema(db)
-	if err != nil {
-		panic(err)
-	}
-
 	return &DB{db}
-}
-
-func createSchema(db *pg.DB) error {
-	for _, model := range []interface{}{(*User)(nil), (*User)(nil)} {
-		err := db.CreateTable(model, &orm.CreateTableOptions{
-			Temp:        false,
-			IfNotExists: true,
-		})
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // save a new user to database
