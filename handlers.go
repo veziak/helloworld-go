@@ -108,13 +108,12 @@ func getBirthdayMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func healthcheck(w http.ResponseWriter, r *http.Request) {
-	/*err := db.CheckDBConnection()
+	err := db.CheckDBConnection()
 	if err != nil {
 		log.Printf("Healtheck failed, error: %v", err)
 		errorResponse(w, http.StatusInternalServerError, "Service is not available at the moment.")
 		return
-	}*/
-	log.Printf("status ok")
+	}
 	Response(w, http.StatusOK, "")
 }
 
