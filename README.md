@@ -1,6 +1,6 @@
 # helloworld-go
 
-#Endpoints
+# Endpoints:
 
 - get a message for a username
 ```bash
