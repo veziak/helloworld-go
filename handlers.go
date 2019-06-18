@@ -93,7 +93,7 @@ func createOrUpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	exist, err := db.UserExist(username)
 	if err != nil {
-		log.Printf("Can't check id user exist, error: %v", err)
+		log.Printf("Can't check if user exist in database, error: %v", err)
 		errorResponse(w, http.StatusInternalServerError, "internal error")
 		return
 	}
